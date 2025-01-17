@@ -6,9 +6,8 @@ import pandas as pd
 # ----------------------------------------------------
 # הגדרת API Key ויצירת לקוח Google Maps
 # ----------------------------------------------------
-API_KEY = "AIzaSyBlo9MobgTHKPWnNh8xzLiioQItIRo5CYA"  # הכנס את המפתח התקין שלך מגוגל קלאוד
+API_KEY = "YOUR_API_KEY"  # הכנס את המפתח התקין שלך מגוגל קלאוד
 gmaps = googlemaps.Client(key=API_KEY)
-st.image("https://github.com/nerya48/distance-calculator/blob/main/%D7%AA%D7%9E%D7%95%D7%A0%D7%94%20%D7%92%D7%99%D7%98%D7%94%D7%91.jpg", width=200)
 
 def get_distance(origin, destination):
     """
@@ -26,10 +25,9 @@ def distance_to_float(distance_text):
     return float(clean)
 
 # ----------------------------------------------------
-# כותרת ראשית עם לוגו
+# כותרת ראשית
 # ----------------------------------------------------
 st.set_page_config(page_title="Distance Calculator", layout="centered")
-st.image("https://example.com/logo.png", width=200)  # עדכן את הקישור ללוגו שלך
 st.title("מחשבון מרחקים - הלוך חזור")
 
 # ----------------------------------------------------
@@ -54,14 +52,14 @@ st.markdown("### הוספת יעדים")
 destinations_str = st.text_area("הדבק כאן כתובות יעד (מופרדות בפסיק):", "")
 destinations = [d.strip() for d in destinations_str.split(",") if d.strip()]
 
-if st.button("צור טבלה לעריכה"):
+if destinations:
     # ------------------------------------------------
-    # טבלה לעריכה: מקור, יעד, חזרה
+    # טבלה אינטראקטיבית לעריכת המקור והחזרה
     # ------------------------------------------------
     data = {
         "מקור": [DEFAULT_ORIGIN] * len(destinations),
         "יעד": destinations,
-        "חזרה": [DEFAULT_ORIGIN] * len(destinations)
+        "חזרה לכתובת": [DEFAULT_ORIGIN] * len(destinations)
     }
     df = pd.DataFrame(data)
 
@@ -69,14 +67,14 @@ if st.button("צור טבלה לעריכה"):
     edited_df = st.experimental_data_editor(df, use_container_width=True)
 
     # ------------------------------------------------
-    # חישוב מרחקים
+    # כפתור חישוב מחדש
     # ------------------------------------------------
     if st.button("📊 חישוב מרחקים"):
         results = []
         for index, row in edited_df.iterrows():
             origin = row["מקור"]
             destination = row["יעד"]
-            return_address = row["חזרה"]
+            return_address = row["חזרה לכתובת"]
 
             try:
                 # חישוב הלוך וחזור
@@ -96,7 +94,7 @@ if st.button("צור טבלה לעריכה"):
         if results:
             st.markdown("### תוצאות חישוב:")
             for result in results:
-                st.write(f"יעד: {result[0]} | מרחק: {result[1]:.2f} ק\"מ | עלות: {result[2]:.2f} ₪")
+                st.write(f"יעד: {result[0]} | מרחק: {result[1]:.2f} ק"מ | עלות: {result[2]:.2f} ₪")
 
             # יצוא לאקסל
             wb = openpyxl.Workbook()
