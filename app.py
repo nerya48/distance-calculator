@@ -78,7 +78,7 @@ if destinations:
             key=f"origin_input_{i}"  # הוספת מפתח ייחודי כדי למנוע בעיות
         )
 
-
+if st.button("📊 חישוב מרחקים"):
     # בדיקות בסיסיות
     if not origin:
         st.warning("❗ לא הוזנה כתובת מקור.")
