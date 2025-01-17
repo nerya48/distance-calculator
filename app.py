@@ -94,7 +94,8 @@ if destinations:
         if results:
             st.markdown("### תוצאות חישוב:")
             for result in results:
-                st.write(f"יעד: {result[0]} | מרחק: {result[1]:.2f} ק"מ | עלות: {result[2]:.2f} ₪")
+                st.write(f"יעד: {result[0]} | מרחק: {result[1]:.2f} ק\"מ | עלות: {result[2]:.2f} ₪")
+
 
             # יצוא לאקסל
             wb = openpyxl.Workbook()
