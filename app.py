@@ -86,7 +86,7 @@ if destinations:
         st.warning("❗ לא הוזנו יעדים.")
     else:
         # מחשבים מרחק הלוך-חזור לכל יעד
-if st.button("📊 חישוב מרחקים"):
+
         results = []
         for dest in destinations:
             try:
