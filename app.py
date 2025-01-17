@@ -62,15 +62,20 @@ if destinations:
     }
     df = pd.DataFrame(data)
 
-    # טבלה לעריכה
-    edited_df = st.experimental_data_editor(df, use_container_width=True)
+    # טבלה לעריכה ידנית
+    for i, row in df.iterrows():
+        col1, col2 = st.columns(2)
+        with col1:
+            df.loc[i, "כתובת מקור"] = st.text_input(f"כתובת מקור ליעד {row['יעד']}", value=row["כתובת מקור"])
+        with col2:
+            df.loc[i, "שנה מקור"] = st.text_input(f"שנה מקור ליעד {row['יעד']}", value=row["שנה מקור"])
 
     # ------------------------------------------------
     # 6) חישוב מרחקים
     # ------------------------------------------------
     if st.button("📊 חישוב מרחקים"):
         results = []
-        for index, row in edited_df.iterrows():
+        for index, row in df.iterrows():
             origin = row["כתובת מקור"] if not row["שנה מקור"] else row["שנה מקור"]
             destination = row["יעד"]
 
@@ -90,8 +95,4 @@ if destinations:
             st.dataframe(df_results, use_container_width=True)
 
             st.download_button(
-                label="📥 הורד קובץ Excel",
-                data=df_results.to_csv(index=False).encode('utf-8'),
-                file_name="distances_round_trip.csv",
-                mime="text/csv"
-            )
+                label="📥 הורד קו
