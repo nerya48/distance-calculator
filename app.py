@@ -31,7 +31,7 @@ def distance_to_float(distance_text):
 # 3) כותרת לאפליקציה ועיצוב בסיסי
 # ----------------------------------------------------
 st.set_page_config(page_title="Distance Calculator", layout="centered")
-st.image("https://github.com/nerya48/distance-calculator/blob/main/PIC.jpg", width=200)
+st.image("PIC.jpg", width=200)
 
 st.title("📍 מחשבון מרחקים - הלוך חזור")
 st.markdown("### מחשב מרחק הלוך-חזור בין כתובת מקור ליעדים ומחשב עלות דלק.")
