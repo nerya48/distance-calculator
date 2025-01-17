@@ -57,19 +57,6 @@ st.sidebar.markdown(f"📍 **כתובת מקור נבחרת:** {origin or '[לא
 st.header("💼 הוספת יעדים")
 destinations_str = st.text_area("🔹 הדבק כאן כתובות יעד (מופרדות בפסיק):", "")
 destinations = [d.strip() for d in destinations_str.split(",") if d.strip()]
-if destinations:
-    st.markdown("### עריכת מקור עבור כל יעד")
-    # יצירת טבלה אינטראקטיבית לעריכת המקור לכל יעד
-    data = {
-        "יעד": destinations,
-        "כתובת מקור": [origin] * len(destinations),  # כתובת ברירת המחדל
-        "שנה מקור": ["" for _ in destinations]  # שדה לעריכה ידנית
-    }
-    df = pd.DataFrame(data)
-
-    # טבלה לעריכה
-    edited_df = st.experimental_data_editor(df, use_container_width=True)
-
 
 # ----------------------------------------------------
 # 6) כפתור 'חשב מרחק הלוך-חזור'
@@ -83,44 +70,26 @@ if st.button("📊 חישוב מרחקים"):
     else:
         # מחשבים מרחק הלוך-חזור לכל יעד
         results = []
-            for index, row in edited_df.iterrows():
-        # אם המשתמש שינה את כתובת המקור, נשתמש בערך החדש
-        origin = row["כתובת מקור"] if not row["שנה מקור"] else row["שנה מקור"]
-        destination = row["יעד"]
+        for dest in destinations:
+            try:
+                going_text = get_distance(origin, dest)
+                return_text = get_distance(dest, origin)
+                total_num = distance_to_float(going_text) + distance_to_float(return_text)
+                total_text = f"{total_num:.2f} km"
+                cost_num = total_num * 0.6
+                cost_text = f"{cost_num:.2f} ₪"
 
-        try:
-            # חישוב הלוך וחזור
-            going_text = get_distance(origin, destination)
-            return_text = get_distance(destination, origin)
-            total_num = distance_to_float(going_text) + distance_to_float(return_text)
-            total_text = f"{total_num:.2f} km"
-            cost_num = total_num * 0.6
-            cost_text = f"{cost_num:.2f} ₪"
+                # שומר תוצאות
+                results.append([dest, total_text, cost_text])
 
-            # שומר תוצאות
-            results.append([destination, total_text, cost_text])
-
-        except Exception as e:
-            st.error(f"שגיאה בחישוב המרחק עבור {destination}: {e}")
-
+            except Exception as e:
+                st.error(f"שגיאה בחישוב המרחק עבור {dest}: {e}")
 
         # ------------------------------------------------
         # 7) הצגת תוצאות
         # ------------------------------------------------
-            # יצירת DataFrame לתוצאות
-    df_results = pd.DataFrame(results, columns=["יעד", "מרחק הלוך-חזור (ק\"מ)", "עלות (ש\"ח)"])
-
-    # הצגת טבלה סופית
-    st.dataframe(df_results, use_container_width=True)
-
-    # כפתור להורדת Excel
-    st.download_button(
-        label="📥 הורד קובץ Excel",
-        data=df_results.to_csv(index=False).encode('utf-8'),
-        file_name="distances_round_trip.csv",
-        mime="text/csv"
-    )
-
+        if results:
+            st.subheader("🔍 תוצאות חישוב")
             for row in results:
                 st.write(f"- יעד: **{row[0]}** | מרחק: {row[1]} | עלות: {row[2]}")
 
