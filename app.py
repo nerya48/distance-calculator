@@ -70,9 +70,13 @@ if destinations:
     }
     df = pd.DataFrame(data)
 
-    # מציג טבלה לעריכה
+    # יצירת שדות טקסט לעריכה ידנית
     for i in range(len(df)):
-    df.loc[i, "כתובת מקור"] = st.text_input(f"כתובת מקור עבור יעד {df.loc[i, 'יעד']}", value=df.loc[i, "כתובת מקור"])
+        df.loc[i, "כתובת מקור"] = st.text_input(
+            f"כתובת מקור עבור יעד {df.loc[i, 'יעד']}",
+            value=df.loc[i, "כתובת מקור"],
+            key=f"origin_input_{i}"  # הוספת מפתח ייחודי כדי למנוע בעיות
+        )
 
 
     # בדיקות בסיסיות
