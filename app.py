@@ -5,7 +5,7 @@ import openpyxl
 # ----------------------------------------------------
 # 1) הגדרת API Key ויצירת לקוח Google Maps
 # ----------------------------------------------------
-API_KEY = "YOUR_API_KEY"  # הכנס את המפתח התקין שלך מגוגל קלאוד
+API_KEY = "AIzaSyBlo9MobgTHKPWnNh8xzLiioQItIRo5CYA"  # הכנס את המפתח התקין שלך מגוגל קלאוד
 gmaps = googlemaps.Client(key=API_KEY)
 
 # ----------------------------------------------------
