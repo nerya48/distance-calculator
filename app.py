@@ -69,7 +69,11 @@ if st.button("חשב מרחק הלוך-חזור"):
                 return_text = get_distance(dest, origin)
                 total_num = distance_to_float(going_text) + distance_to_float(return_text)
                 total_text = f"{total_num:.2f} km"
-                results.append([dest, total_text])
+                cost_num = total_num * 0.6
+                cost_text = f"{cost_num:.2f} ₪"
+
+results.append([dest, total_text, cost_text])
+                
 
             except Exception as e:
                 st.error(f"שגיאה בחישוב המרחק עבור {dest}: {e}")
@@ -88,9 +92,9 @@ if st.button("חשב מרחק הלוך-חזור"):
             wb = openpyxl.Workbook()
             ws = wb.active
             ws.title = "Distances"
-            ws.append(["Destination", "Round Trip Distance"])
+            ws.append(["Destination", "Round Trip Distance", "Cost"])
             for row in results:
-                ws.append(row)
+            ws.append(row)
 
             excel_filename = "distances_round_trip.xlsx"
             wb.save(excel_filename)
