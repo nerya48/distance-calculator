@@ -71,7 +71,9 @@ if destinations:
     df = pd.DataFrame(data)
 
     # מציג טבלה לעריכה
-    edited_df = st.experimental_data_editor(df, use_container_width=True)
+    for i in range(len(df)):
+    df.loc[i, "כתובת מקור"] = st.text_input(f"כתובת מקור עבור יעד {df.loc[i, 'יעד']}", value=df.loc[i, "כתובת מקור"])
+
 
     # בדיקות בסיסיות
     if not origin:
