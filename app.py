@@ -64,8 +64,7 @@ if destinations:
     df = pd.DataFrame(data)
 
     st.markdown("### טבלה לעריכה")
-    edited_df = st.experimental_data_editor(df, use_container_width=True)
-
+    edited_df = st.dataframe(df, use_container_width=True)
     # ------------------------------------------------
     # כפתור חישוב מחדש
     # ------------------------------------------------
