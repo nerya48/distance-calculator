@@ -28,38 +28,43 @@ def distance_to_float(distance_text):
     return float(clean)
 
 # ----------------------------------------------------
-# 3) כותרת לאפליקציה
+# 3) כותרת לאפליקציה ועיצוב בסיסי
 # ----------------------------------------------------
-st.title("Distance Calculator – הלוך חזור")
-
-DEFAULT_ORIGIN = "Beit Shemesh Roy Klein 21"
+st.set_page_config(page_title="Distance Calculator", layout="centered")
+st.title("📍 מחשבון מרחקים - הלוך חזור")
+st.markdown("### מחשב מרחק הלוך-חזור בין כתובת מקור ליעדים ומחשב עלות דלק.")
 
 # ----------------------------------------------------
 # 4) בחירת מקור
 # ----------------------------------------------------
-use_default = st.radio("האם להשתמש במקור ברירת המחדל?", ["כן", "לא"], index=0)
+DEFAULT_ORIGIN = "Beit Shemesh Roy Klein 21"
+
+st.sidebar.header("הגדרות מקור")
+use_default = st.sidebar.radio("האם להשתמש במקור ברירת המחדל?", ["כן", "לא"], index=0)
+
 if use_default == "כן":
     origin = DEFAULT_ORIGIN
 else:
-    origin = st.text_input("הכנס כתובת מקור חלופית:", value="")
+    origin = st.sidebar.text_input("הכנס כתובת מקור חלופית:", value="")
 
-st.write(f"כתובת מקור: {origin or '[לא הוזן]'}")
+st.sidebar.markdown(f"📍 **כתובת מקור נבחרת:** {origin or '[לא הוזנה]'}")
 
 # ----------------------------------------------------
-# 5) קבלת היעדים בבת אחת
+# 5) קבלת יעדים בבת אחת
 # ----------------------------------------------------
-destinations_str = st.text_area("הדבק כאן כתובות יעד (מופרדות בפסיק):", "")
+st.header("💼 הוספת יעדים")
+destinations_str = st.text_area("🔹 הדבק כאן כתובות יעד (מופרדות בפסיק):", "")
 destinations = [d.strip() for d in destinations_str.split(",") if d.strip()]
 
 # ----------------------------------------------------
 # 6) כפתור 'חשב מרחק הלוך-חזור'
 # ----------------------------------------------------
-if st.button("חשב מרחק הלוך-חזור"):
+if st.button("📊 חישוב מרחקים"):
     # בדיקות בסיסיות
     if not origin:
-        st.warning("לא הוזנה כתובת מקור.")
+        st.warning("❗ לא הוזנה כתובת מקור.")
     elif not destinations:
-        st.warning("לא הוזנו יעדים.")
+        st.warning("❗ לא הוזנו יעדים.")
     else:
         # מחשבים מרחק הלוך-חזור לכל יעד
         results = []
@@ -72,8 +77,8 @@ if st.button("חשב מרחק הלוך-חזור"):
                 cost_num = total_num * 0.6
                 cost_text = f"{cost_num:.2f} ₪"
 
-results.append([dest, total_text, cost_text])
-                
+                # שומר תוצאות
+                results.append([dest, total_text, cost_text])
 
             except Exception as e:
                 st.error(f"שגיאה בחישוב המרחק עבור {dest}: {e}")
@@ -82,9 +87,9 @@ results.append([dest, total_text, cost_text])
         # 7) הצגת תוצאות
         # ------------------------------------------------
         if results:
-            st.subheader("תוצאות חישוב:")
+            st.subheader("🔍 תוצאות חישוב")
             for row in results:
-                st.write(f"- **{row[0]}**: {row[1]}")
+                st.write(f"- יעד: **{row[0]}** | מרחק: {row[1]} | עלות: {row[2]}")
 
             # --------------------------------------------
             # 8) יצוא לאקסל
@@ -94,7 +99,7 @@ results.append([dest, total_text, cost_text])
             ws.title = "Distances"
             ws.append(["Destination", "Round Trip Distance", "Cost"])
             for row in results:
-            ws.append(row)
+                ws.append(row)
 
             excel_filename = "distances_round_trip.xlsx"
             wb.save(excel_filename)
@@ -103,7 +108,7 @@ results.append([dest, total_text, cost_text])
             with open(excel_filename, "rb") as f:
                 excel_data = f.read()
             st.download_button(
-                label="הורד קובץ Excel",
+                label="📥 הורד קובץ Excel",
                 data=excel_data,
                 file_name=excel_filename,
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
