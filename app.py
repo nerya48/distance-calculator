@@ -53,11 +53,52 @@ else:
 st.sidebar.markdown(f"📍 **כתובת מקור נבחרת:** {origin or '[לא הוזנה]'}")
 
 # ----------------------------------------------------
-# 5) קבלת יעדים בבת אחת
+# ----------------------------------------------------
+# 5) קבלת יעדים והגדרת כתובת מקור עבור כל יעד
 # ----------------------------------------------------
 st.header("💼 הוספת יעדים")
 destinations_str = st.text_area("🔹 הדבק כאן כתובות יעד (מופרדות בפסיק):", "")
 destinations = [d.strip() for d in destinations_str.split(",") if d.strip()]
+
+if destinations:
+    st.markdown("### עריכת מקור עבור כל יעד")
+    data = {
+        "יעד": destinations,
+        "כתובת מקור": [DEFAULT_ORIGIN] * len(destinations),  # ברירת מחדל
+    }
+
+    # איסוף תוצאות מעודכנות מהמשתמש
+    updated_destinations = []
+
+    for i, destination in enumerate(destinations):
+        st.markdown(f"**יעד {i + 1}: {destination}**")
+
+        # אפשרות בחירה לכתובת מקור
+        use_default = st.radio(
+            f"האם להשתמש בכתובת ברירת המחדל עבור {destination}?",
+            ["כן", "לא"],
+            index=0,
+            key=f"default_radio_{i}"
+        )
+
+        # קלט לכתובת מקור חלופית אם המשתמש בחר "לא"
+        if use_default == "כן":
+            origin = DEFAULT_ORIGIN
+        else:
+            origin = st.text_input(
+                f"🔹 הכנס כתובת מקור עבור {destination}:",
+                key=f"custom_origin_{i}"
+            )
+
+        # הוספת התוצאה לנתונים המעודכנים
+        updated_destinations.append({"יעד": destination, "כתובת מקור": origin})
+
+    # המרה ל-DataFrame
+    df = pd.DataFrame(updated_destinations)
+
+    # הצגת טבלה מעודכנת
+    st.subheader("📋 טבלת נתונים מעודכנת")
+    st.dataframe(df, use_container_width=True)
 
 # ----------------------------------------------------
 # 6) כפתור 'חשב מרחק הלוך-חזור'
