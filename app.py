@@ -25,9 +25,10 @@ def distance_to_float(distance_text):
     return float(clean)
 
 # ----------------------------------------------------
-# כותרת ראשית
+# כותרת ראשית עם לוגו
 # ----------------------------------------------------
 st.set_page_config(page_title="Distance Calculator", layout="centered")
+st.image("https://example.com/logo.png", width=200)  # עדכן את הקישור ללוגו שלך
 st.title("מחשבון מרחקים - הלוך חזור")
 
 # ----------------------------------------------------
@@ -52,28 +53,29 @@ st.markdown("### הוספת יעדים")
 destinations_str = st.text_area("הדבק כאן כתובות יעד (מופרדות בפסיק):", "")
 destinations = [d.strip() for d in destinations_str.split(",") if d.strip()]
 
-if destinations:
+if st.button("צור טבלה לעריכה"):
     # ------------------------------------------------
-    # טבלה אינטראקטיבית לעריכת המקור והחזרה
+    # טבלה לעריכה: מקור, יעד, חזרה
     # ------------------------------------------------
     data = {
         "מקור": [DEFAULT_ORIGIN] * len(destinations),
         "יעד": destinations,
-        "חזרה לכתובת": [DEFAULT_ORIGIN] * len(destinations)
+        "חזרה": [DEFAULT_ORIGIN] * len(destinations)
     }
     df = pd.DataFrame(data)
 
     st.markdown("### טבלה לעריכה")
-    edited_df = st.dataframe(df, use_container_width=True)
+    edited_df = st.experimental_data_editor(df, use_container_width=True)
+
     # ------------------------------------------------
-    # כפתור חישוב מחדש
+    # חישוב מרחקים
     # ------------------------------------------------
     if st.button("📊 חישוב מרחקים"):
         results = []
         for index, row in edited_df.iterrows():
             origin = row["מקור"]
             destination = row["יעד"]
-            return_address = row["חזרה לכתובת"]
+            return_address = row["חזרה"]
 
             try:
                 # חישוב הלוך וחזור
@@ -94,7 +96,6 @@ if destinations:
             st.markdown("### תוצאות חישוב:")
             for result in results:
                 st.write(f"יעד: {result[0]} | מרחק: {result[1]:.2f} ק\"מ | עלות: {result[2]:.2f} ₪")
-
 
             # יצוא לאקסל
             wb = openpyxl.Workbook()
