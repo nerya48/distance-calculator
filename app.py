@@ -32,7 +32,7 @@ def distance_to_float(distance_text):
 # 3) כותרת לאפליקציה ועיצוב בסיסי
 # ----------------------------------------------------
 st.set_page_config(page_title="Distance Calculator", layout="centered")
-st.image("PIC.jpg", width=40)
+st.image("PIC.jpg", width=100)
 
 st.title("📍 מחשבון עלות נסיעה - הלוך חזור")
 st.markdown("### מחשב מרחק הלוך-חזור בין כתובת מקור ליעדים ומחשב עלות דלק.")
@@ -40,17 +40,17 @@ st.markdown("### מחשב מרחק הלוך-חזור בין כתובת מקור 
 # ----------------------------------------------------
 # 4) בחירת מקור
 # ----------------------------------------------------
+st.header("🏠 הגדרת כתובת מקור")
 DEFAULT_ORIGIN = "בית שמש רועי קלין 21"
 
-st.sidebar.header("הגדרות מקור")
-use_default_global = st.sidebar.radio("האם להשתמש במקור ברירת המחדל?", ["כן", "לא"], index=0)
+use_default_global = st.radio("האם להשתמש בכתובת ברירת המחדל?", ["כן", "לא"], index=0)
 
 if use_default_global == "כן":
     global_origin = DEFAULT_ORIGIN
 else:
-    global_origin = st.sidebar.text_input("הכנס כתובת מקור חלופית:", value="")
+    global_origin = st.text_input("🔹 הכנס כתובת מקור חלופית:", value="")
 
-st.sidebar.markdown(f"📍 **כתובת מקור נבחרת:** {global_origin or '[לא הוזנה]'}")
+st.markdown(f"📍 **כתובת מקור נבחרת:** {global_origin or '[לא הוזנה]'}")
 
 # ----------------------------------------------------
 # 5) קבלת יעדים והגדרת כתובת מקור עבור כל יעד
