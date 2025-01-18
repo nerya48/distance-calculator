@@ -34,7 +34,7 @@ def distance_to_float(distance_text):
 st.set_page_config(page_title="Distance Calculator", layout="centered")
 st.image("PIC.jpg", width=100)
 
-st.title("📍 מחשבון עלות נסיעה - הלוך חזור")
+st.title("💖מחשבון עלות נסיעה -לשירה שלי)
 st.markdown("### מחשב מרחק הלוך-חזור בין כתובת מקור ליעדים ומחשב עלות דלק.")
 
 # ----------------------------------------------------
@@ -68,7 +68,7 @@ if destinations:
 
         # עריכת כתובת היציאה
         use_default_origin = st.radio(
-            f"האם להשתמש בכתובת ברירת המחדל ליציאה עבור {destination}?",
+            f"כתובת ברירת המחדל ליציאה  {destination}?",
             ["כן", "לא"],
             index=0,
             key=f"origin_radio_{i}"
@@ -84,7 +84,7 @@ if destinations:
 
         # עריכת כתובת החזרה
         use_default_return = st.radio(
-            f"האם להשתמש בכתובת ברירת המחדל לחזרה עבור {destination}?",
+            f"כתובת ברירת המחדל לחזרה  {destination}?",
             ["כן", "לא"],
             index=0,
             key=f"return_radio_{i}"
