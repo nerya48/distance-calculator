@@ -122,20 +122,26 @@ if st.button("📊 חישוב מרחקים"):
         # מחשבים מרחק הלוך-חזור לכל יעד
 
         results = []
-        for dest in destinations:
-            try:
-                going_text = get_distance(origin, dest)
-                return_text = get_distance(dest, origin)
-                total_num = distance_to_float(going_text) + distance_to_float(return_text)
-                total_text = f"{total_num:.2f} km"
-                cost_num = total_num * 0.6
-                cost_text = f"{cost_num:.2f} ₪"
+        for i, row in df.iterrows():
+    try:
+        # השתמש בכתובת המקור המעודכנת מהטבלה
+        current_origin = row["כתובת מקור"]
+        destination = row["יעד"]
 
-                # שומר תוצאות
-                results.append([dest, total_text, cost_text])
+        # חישוב הלוך וחזור
+        going_text = get_distance(current_origin, destination)
+        return_text = get_distance(destination, current_origin)
+        total_num = distance_to_float(going_text) + distance_to_float(return_text)
+        total_text = f"{total_num:.2f} km"
+        cost_num = total_num * 0.6
+        cost_text = f"{cost_num:.2f} ₪"
 
-            except Exception as e:
-                st.error(f"שגיאה בחישוב המרחק עבור {dest}: {e}")
+        # שומר תוצאות
+        results.append([destination, total_text, cost_text])
+
+    except Exception as e:
+        st.error(f"שגיאה בחישוב המרחק עבור {destination}: {e}")
+
 
         # ------------------------------------------------
         # 7) הצגת תוצאות
