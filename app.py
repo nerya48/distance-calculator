@@ -43,16 +43,15 @@ st.markdown("### מחשב מרחק הלוך-חזור בין כתובת מקור 
 DEFAULT_ORIGIN = "בית שמש רועי קלין 21"
 
 st.sidebar.header("הגדרות מקור")
-use_default = st.sidebar.radio("האם להשתמש במקור ברירת המחדל?", ["כן", "לא"], index=0)
+use_default_global = st.sidebar.radio("האם להשתמש במקור ברירת המחדל?", ["כן", "לא"], index=0)
 
-if use_default == "כן":
-    origin = DEFAULT_ORIGIN
+if use_default_global == "כן":
+    global_origin = DEFAULT_ORIGIN
 else:
-    origin = st.sidebar.text_input("הכנס כתובת מקור חלופית:", value="")
+    global_origin = st.sidebar.text_input("הכנס כתובת מקור חלופית:", value="")
 
-st.sidebar.markdown(f"📍 **כתובת מקור נבחרת:** {origin or '[לא הוזנה]'}")
+st.sidebar.markdown(f"📍 **כתובת מקור נבחרת:** {global_origin or '[לא הוזנה]'}")
 
-# ----------------------------------------------------
 # ----------------------------------------------------
 # 5) קבלת יעדים והגדרת כתובת מקור עבור כל יעד
 # ----------------------------------------------------
@@ -62,12 +61,6 @@ destinations = [d.strip() for d in destinations_str.split(",") if d.strip()]
 
 if destinations:
     st.markdown("### עריכת מקור עבור כל יעד")
-    data = {
-        "יעד": destinations,
-        "כתובת מקור": [DEFAULT_ORIGIN] * len(destinations),  # ברירת מחדל
-    }
-
-    # איסוף תוצאות מעודכנות מהמשתמש
     updated_destinations = []
 
     for i, destination in enumerate(destinations):
@@ -83,7 +76,7 @@ if destinations:
 
         # קלט לכתובת מקור חלופית אם המשתמש בחר "לא"
         if use_default == "כן":
-            origin = DEFAULT_ORIGIN
+            origin = global_origin
         else:
             origin = st.text_input(
                 f"🔹 הכנס כתובת מקור עבור {destination}:",
@@ -101,75 +94,53 @@ if destinations:
     st.dataframe(df, use_container_width=True)
 
 # ----------------------------------------------------
-# 6) כפתור 'חשב מרחק הלוך-חזור'
+# 6) כפתור 'חשב מרחקים'
 # ----------------------------------------------------
-if destinations:
-    st.markdown("### עריכת מקור עבור כל יעד")
-    data = {
-        "יעד": destinations,
-        "כתובת מקור": [origin] * len(destinations),
-    }
-    df = pd.DataFrame(data)
-        
-
-if st.button("📊 חישוב מרחקים"):
-    # בדיקות בסיסיות
-    if not origin:
-        st.warning("❗ לא הוזנה כתובת מקור.")
-    elif not destinations:
-        st.warning("❗ לא הוזנו יעדים.")
-    else:
-        # מחשבים מרחק הלוך-חזור לכל יעד
-
-        results = []
-        for i, row in df.iterrows():
+if st.button("📊 חישוב מרחקים") and destinations:
+    results = []
+    for i, row in df.iterrows():
         try:
-        # השתמש בכתובת המקור המעודכנת מהטבלה
-        current_origin = row["כתובת מקור"]
-        destination = row["יעד"]
+            # שימוש בכתובת המקור המעודכנת מהטבלה
+            current_origin = row["כתובת מקור"]
+            destination = row["יעד"]
 
-        # חישוב הלוך וחזור
-        going_text = get_distance(current_origin, destination)
-        return_text = get_distance(destination, current_origin)
-        total_num = distance_to_float(going_text) + distance_to_float(return_text)
-        total_text = f"{total_num:.2f} km"
-        cost_num = total_num * 0.6
-        cost_text = f"{cost_num:.2f} ₪"
+            # חישוב הלוך וחזור
+            going_text = get_distance(current_origin, destination)
+            return_text = get_distance(destination, current_origin)
+            total_num = distance_to_float(going_text) + distance_to_float(return_text)
+            total_text = f"{total_num:.2f} km"
+            cost_num = total_num * 0.6
+            cost_text = f"{cost_num:.2f} ₪"
 
-        # שומר תוצאות
-        results.append([destination, total_text, cost_text])
+            # שומר תוצאות
+            results.append([destination, total_text, cost_text])
 
-    except Exception as e:
-        st.error(f"שגיאה בחישוב המרחק עבור {destination}: {e}")
+        except Exception as e:
+            st.error(f"שגיאה בחישוב המרחק עבור {destination}: {e}")
 
+    # הצגת תוצאות
+    if results:
+        st.subheader("🔍 תוצאות חישוב")
+        for row in results:
+            st.write(f"- יעד: **{row[0]}** | מרחק: {row[1]} | עלות: {row[2]}")
 
-        # ------------------------------------------------
-        # 7) הצגת תוצאות
-        # ------------------------------------------------
-        if results:
-            st.subheader("🔍 תוצאות חישוב")
-            for row in results:
-                st.write(f"- יעד: **{row[0]}** | מרחק: {row[1]} | עלות: {row[2]}")
+        # יצוא לאקסל
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Distances"
+        ws.append(["Destination", "Round Trip Distance", "Cost"])
+        for row in results:
+            ws.append(row)
 
-            # --------------------------------------------
-            # 8) יצוא לאקסל
-            # --------------------------------------------
-            wb = openpyxl.Workbook()
-            ws = wb.active
-            ws.title = "Distances"
-            ws.append(["Destination", "Round Trip Distance", "Cost"])
-            for row in results:
-                ws.append(row)
+        excel_filename = "distances_round_trip.xlsx"
+        wb.save(excel_filename)
 
-            excel_filename = "distances_round_trip.xlsx"
-            wb.save(excel_filename)
-
-            # כפתור הורדה של Excel
-            with open(excel_filename, "rb") as f:
-                excel_data = f.read()
-            st.download_button(
-                label="📥 הורד קובץ Excel",
-                data=excel_data,
-                file_name=excel_filename,
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
+        # כפתור הורדה של Excel
+        with open(excel_filename, "rb") as f:
+            excel_data = f.read()
+        st.download_button(
+            label="📥 הורד קובץ Excel",
+            data=excel_data,
+            file_name=excel_filename,
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
