@@ -1,0 +1,29 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+import time
+
+# פתיחת הדפדפן
+driver = webdriver.Chrome()
+
+# כניסה לאתר של כביש 6
+driver.get("https://www.6.co.il/calculate-toll")
+
+# הזנת כתובת מקור
+origin_input = driver.find_element(By.ID, "origin-input")
+origin_input.send_keys("בית שמש")
+
+# הזנת כתובת יעד
+destination_input = driver.find_element(By.ID, "destination-input")
+destination_input.send_keys("תל אביב")
+destination_input.send_keys(Keys.RETURN)
+
+# המתנה לטעינת התוצאה
+time.sleep(5)
+
+# שליפת התוצאה
+result = driver.find_element(By.CLASS_NAME, "toll-result")
+print("עלות הנסיעה:", result.text)
+
+# סגירת הדפדפן
+driver.quit()
