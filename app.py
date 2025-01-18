@@ -110,7 +110,7 @@ if destinations:
         "כתובת מקור": [origin] * len(destinations),
     }
     df = pd.DataFrame(data)
-        )
+        
 
 if st.button("📊 חישוב מרחקים"):
     # בדיקות בסיסיות
