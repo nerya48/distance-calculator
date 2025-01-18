@@ -123,7 +123,7 @@ if st.button("📊 חישוב מרחקים"):
 
         results = []
         for i, row in df.iterrows():
-    try:
+        try:
         # השתמש בכתובת המקור המעודכנת מהטבלה
         current_origin = row["כתובת מקור"]
         destination = row["יעד"]
