@@ -53,38 +53,57 @@ else:
 st.markdown(f"📍 **כתובת מקור נבחרת:** {global_origin or '[לא הוזנה]'}")
 
 # ----------------------------------------------------
-# 5) קבלת יעדים והגדרת כתובת מקור עבור כל יעד
+# 5) קבלת יעדים והגדרת כתובת מקור וחזרה
 # ----------------------------------------------------
 st.header("💼 הוספת יעדים")
 destinations_str = st.text_area("🔹 הדבק כאן כתובות יעד (מופרדות בפסיק):", "")
 destinations = [d.strip() for d in destinations_str.split(",") if d.strip()]
 
 if destinations:
-    st.markdown("### עריכת מקור עבור כל יעד")
+    st.markdown("### עריכת כתובות עבור כל יעד")
     updated_destinations = []
 
     for i, destination in enumerate(destinations):
         st.markdown(f"**יעד {i + 1}: {destination}**")
 
-        # אפשרות בחירה לכתובת מקור
-        use_default = st.radio(
-            f"האם להשתמש בכתובת ברירת המחדל עבור {destination}?",
+        # עריכת כתובת היציאה
+        use_default_origin = st.radio(
+            f"האם להשתמש בכתובת ברירת המחדל ליציאה עבור {destination}?",
             ["כן", "לא"],
             index=0,
-            key=f"default_radio_{i}"
+            key=f"origin_radio_{i}"
         )
 
-        # קלט לכתובת מקור חלופית אם המשתמש בחר "לא"
-        if use_default == "כן":
+        if use_default_origin == "כן":
             origin = global_origin
         else:
             origin = st.text_input(
-                f"🔹 הכנס כתובת מקור עבור {destination}:",
+                f"🔹 הכנס כתובת יציאה עבור {destination}:",
                 key=f"custom_origin_{i}"
             )
 
+        # עריכת כתובת החזרה
+        use_default_return = st.radio(
+            f"האם להשתמש בכתובת ברירת המחדל לחזרה עבור {destination}?",
+            ["כן", "לא"],
+            index=0,
+            key=f"return_radio_{i}"
+        )
+
+        if use_default_return == "כן":
+            return_address = global_origin
+        else:
+            return_address = st.text_input(
+                f"🔹 הכנס כתובת חזרה עבור {destination}:",
+                key=f"custom_return_{i}"
+            )
+
         # הוספת התוצאה לנתונים המעודכנים
-        updated_destinations.append({"יעד": destination, "כתובת מקור": origin})
+        updated_destinations.append({
+            "יעד": destination,
+            "כתובת יציאה": origin,
+            "כתובת חזרה": return_address
+        })
 
     # המרה ל-DataFrame
     df = pd.DataFrame(updated_destinations)
@@ -100,13 +119,14 @@ if st.button("📊 חישוב מרחקים") and destinations:
     results = []
     for i, row in df.iterrows():
         try:
-            # שימוש בכתובת המקור המעודכנת מהטבלה
-            current_origin = row["כתובת מקור"]
+            # שימוש בכתובות היציאה והחזרה המעודכנות מהטבלה
+            current_origin = row["כתובת יציאה"]
+            current_return = row["כתובת חזרה"]
             destination = row["יעד"]
 
             # חישוב הלוך וחזור
             going_text = get_distance(current_origin, destination)
-            return_text = get_distance(destination, current_origin)
+            return_text = get_distance(destination, current_return)
             total_num = distance_to_float(going_text) + distance_to_float(return_text)
             total_text = f"{total_num:.2f} km"
             cost_num = total_num * 0.6
