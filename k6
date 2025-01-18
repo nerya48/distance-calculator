@@ -1,0 +1,18 @@
+import requests
+from bs4 import BeautifulSoup
+
+# כתובת האתר
+url = "https://example.com/toll"
+params = {"origin": "בית שמש", "destination": "תל אביב"}
+
+# שליחת הבקשה לאתר
+response = requests.get(url, params=params)
+
+# בדיקה אם הבקשה הצליחה
+if response.status_code == 200:
+    html_content = response.text  # תוכן ה-HTML של הדף
+    soup = BeautifulSoup(html_content, "html.parser")  # ניתוח ה-HTML
+    toll_price = soup.find("span", {"class": "toll-price"}).text  # חיפוש מחיר הנסיעה
+    print("עלות הנסיעה היא:", toll_price)
+else:
+    print("שגיאה בבקשה:", response.status_code)
