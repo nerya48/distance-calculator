@@ -34,7 +34,7 @@ def distance_to_float(distance_text):
 st.set_page_config(page_title="Distance Calculator", layout="centered")
 st.image("PIC.jpg", width=100)
 
-st.title("💖מחשבון עלות נסיעה -לשירה שלי)
+st.title("💖מחשבון עלות נסיעה -לשירה שלי")
 st.markdown("### מחשב מרחק הלוך-חזור בין כתובת מקור ליעדים ומחשב עלות דלק.")
 
 # ----------------------------------------------------
